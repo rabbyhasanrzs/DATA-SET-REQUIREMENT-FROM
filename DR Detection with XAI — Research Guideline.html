@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="bn"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DR Detection with XAI — Research Guideline</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg:#f6f4fa;--sf:#fff;--ink:#1d1830;--mu:#66607a;--ln:#e0dbec;--ac:#4b3fb3;--ac2:#ece9fb;--wa:#a35a00;--wb:#fff1dc;--ok:#1d7a4a;--er:#b3283d;--g0:#2f9e6b;--g1:#8cae2a;--g2:#e0a526;--g3:#e2702a;--g4:#c4264a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#130f1f;--sf:#1c1730;--ink:#ece8fa;--mu:#a49dc0;--ln:#312a4b;--ac:#a79cff;--ac2:#2a2350;--wa:#f2b45a;--wb:#35260d;--ok:#5fd093;--er:#ff8a9c}}
+:root[data-theme="dark"]{--bg:#130f1f;--sf:#1c1730;--ink:#ece8fa;--mu:#a49dc0;--ln:#312a4b;--ac:#a79cff;--ac2:#2a2350;--wa:#f2b45a;--wb:#35260d;--ok:#5fd093;--er:#ff8a9c}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:64px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 "Hind Siliguri",system-ui,sans-serif}
+header{position:sticky;top:0;z-index:10;background:var(--sf);border-bottom:1px solid var(--ln);padding-top:env(safe-area-inset-top,0px)}
+.bar{display:flex;gap:8px;align-items:center;padding:8px 16px;max-width:1100px;margin:auto}
+.bar b{white-space:nowrap}.nav{display:flex;gap:2px;overflow-x:auto;flex:1;scrollbar-width:none}.nav a{padding:5px 10px;border-radius:7px;color:var(--mu);text-decoration:none;font-size:14px;white-space:nowrap}.nav a:hover,.nav a.on{background:var(--ac2);color:var(--ac)}
+.pg{height:3px;background:var(--ln)}.pg i{display:block;height:100%;width:0;background:var(--ac)}
+button{font:inherit;cursor:pointer;border:1px solid var(--ln);background:var(--sf);color:var(--ink);padding:6px 12px;border-radius:9px}button:hover{border-color:var(--ac);color:var(--ac)}:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+main{max-width:1100px;margin:auto;padding:24px 16px 70px}
+.hero{padding:28px;border-radius:18px;background:var(--sf);border:1px solid var(--ln);margin-bottom:22px}
+.hero h1{margin:0 0 6px;font-size:clamp(26px,4.2vw,40px);line-height:1.2}.hero p{margin:0 0 18px;color:var(--mu);max-width:64ch}
+.gr{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.gr button{padding:14px 6px;border-radius:12px;text-align:center;border:2px solid var(--ln);font-weight:600;line-height:1.3}
+.gr button small{display:block;font:400 12px "JetBrains Mono",monospace;color:var(--mu)}.gr button.on{color:#fff;border-color:transparent}
+#gd{margin-top:12px;padding:14px 16px;border-radius:12px;background:var(--ac2);min-height:60px}
+.warn{margin-top:12px;font-size:14px;color:var(--wa);background:var(--wb);padding:10px 14px;border-radius:10px}
+section{margin-top:26px}section>h2{font-size:24px;margin:0 0 4px;line-height:1.3}section>p.lead{margin:0 0 14px;color:var(--mu)}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:16px 18px}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}.g .card h4{margin:0 0 4px;font-size:16px}.g .card p{margin:0;font-size:14.5px;color:var(--mu)}
+ul{margin:6px 0;padding-left:20px}li{margin:4px 0}code{font:13px "JetBrains Mono",monospace;background:var(--ac2);color:var(--ac);padding:1px 6px;border-radius:5px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.tabs button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14.5px}td,th{padding:7px 10px;border-bottom:1px solid var(--ln);text-align:left;vertical-align:top}th{color:var(--mu);font-weight:500}
+.plan{display:grid;grid-template-columns:1fr 1fr;gap:18px}.row{display:grid;grid-template-columns:130px 1fr 60px;gap:8px;align-items:center;font-size:14px;margin:6px 0}.row input{width:100%;accent-color:var(--ac)}
+.stk{display:flex;height:34px;border-radius:9px;overflow:hidden;margin:10px 0;font:500 12px "JetBrains Mono",monospace;color:#fff}.stk span{display:grid;place-items:center;transition:flex .2s}
+.big{font:600 28px "JetBrains Mono",monospace;color:var(--ac)}.mu{color:var(--mu);font-size:14px}
+.ck{display:flex;gap:10px;align-items:flex-start;padding:6px 0}.ck input{margin-top:7px;accent-color:var(--ac);width:17px;height:17px;flex:none}.ck.d span{color:var(--mu);text-decoration:line-through}
+.grp h4{margin:14px 0 2px;color:var(--ac);font-size:15px}
+.tl{counter-reset:s;display:grid;gap:8px}.st{display:flex;gap:12px;align-items:flex-start;padding:10px 14px;border:1px solid var(--ln);border-radius:12px;background:var(--sf)}
+.st .n{flex:none;width:30px;height:30px;border-radius:50%;background:var(--ac2);color:var(--ac);display:grid;place-items:center;font:600 13px "JetBrains Mono",monospace}.st.d .n{background:var(--ok);color:#fff}
+.st b{display:block}.st small{color:var(--mu);font-size:14px;line-height:1.5;display:block}.st input{margin-left:auto;margin-top:6px;accent-color:var(--ok);width:17px;height:17px;flex:none}
+.lv{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}.lv .card{border-top:4px solid var(--ac)}.lv .card:nth-child(2){border-color:var(--g2)}.lv .card:nth-child(3){border-color:var(--g0)}
+pre{background:var(--ac2);padding:14px;border-radius:10px;overflow-x:auto;font:13px/1.55 "JetBrains Mono",monospace;margin:0}
+.pill{display:inline-block;font-size:13px;padding:2px 10px;border-radius:99px;background:var(--ac2);color:var(--ac);margin:2px}
+input[type=search]{padding:9px 13px;border:1px solid var(--ln);border-radius:10px;background:var(--sf);color:var(--ink);font:inherit;width:100%;max-width:340px}
+.note{margin-top:34px;color:var(--mu);font-size:14px}
+@media(max-width:700px){.plan{grid-template-columns:1fr}.gr button{font-size:13px;padding:10px 2px}.bar b{display:none}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style></head><body>
+<header><div class="bar"><b>DR · XAI Guideline</b><nav class="nav" id="nv"></nav><button id="th">Theme</button></div><div class="pg"><i id="pb"></i></div></header>
+<main>
+<div class="hero"><h1>Diabetic Retinopathy Detection with Explainable AI</h1><p>National Institute of Ophthalmology & Hospital থেকে data collection-এর আগে যা যাচাই করতে হবে, সেই technical, clinical, ethical ও research requirement-এর পূর্ণ guideline। একটি grade বেছে নিন:</p>
+<div class="gr" id="gr"></div><div id="gd"></div>
+<div class="warn">DR grade আর diabetic macular edema (DME) এক নয়; DME scope-এ থাকলে আলাদা clinical label লাগবে। চূড়ান্ত label হবে হাসপাতালের অনুমোদিত grading protocol ও যোগ্য grader অনুযায়ী।</div></div>
+
+<section id="s1"><h2>১. Research objective</h2><p class="lead">প্রথমে scope পরিষ্কার করুন।</p><div class="g">
+<div class="card"><h4>Classification</h4><p>Fundus image থেকে ৫টি clinical grade শনাক্ত।</p></div>
+<div class="card"><h4>Model evaluation</h4><p>উপযুক্ত deep learning model-এর performance মূল্যায়ন।</p></div>
+<div class="card"><h4>Explainability</h4><p>Grad-CAM বা অন্য XAI দিয়ে prediction ব্যাখ্যা।</p></div>
+<div class="card"><h4>Expert comparison</h4><p>সম্ভব হলে lesion annotation-এর সঙ্গে explanation তুলনা।</p></div>
+<div class="card"><h4>Local validity</h4><p>বাংলাদেশের clinical image-এ কার্যকারিতা ও সীমাবদ্ধতা।</p></div></div></section>
+
+<section id="s2"><h2>২. কতগুলো image দরকার?</h2><p class="lead">৫০০ বা ১,০০০ per class একটি planning target, universal scientific minimum নয়।</p>
+<div class="card plan"><div><div class="row"><label for="pc">Usable image / class</label><input id="pc" type="range" min="100" max="1500" step="50" value="500"><b id="pcv">500</b></div>
+<div class="row"><label for="tr">Train %</label><input id="tr" type="range" min="50" max="85" value="70"><b id="trv">70</b></div>
+<div class="row"><label for="va">Validation %</label><input id="va" type="range" min="5" max="25" value="15"><b id="vav">15</b></div>
+<p class="mu">Test % = বাকি অংশ। Preset: <button data-p="500">প্রাথমিক (2,500)</button> <button data-p="1000">বর্ধিত (5,000)</button></p></div>
+<div><span class="big" id="tot">2,500</span> <span class="mu">মোট usable image (৫ class)</span><div class="stk" id="sk"></div><div class="tw"><table id="tb"></table></div></div></div>
+<div class="warn">Image count-এর পাশাপাশি unique patient count, প্রতি class-এ patient, চোখ অনুযায়ী image, repeat visit ও QC-তে বাদ পড়া image রাখুন। একই রোগীর একাধিক ছবি independent patient নয়। Patient-level grouping-এর পর প্রকৃত split সংখ্যা ভিন্ন হতে পারে।</div></section>
+
+<section id="s3"><h2>৩. হাসপাতাল থেকে কী ধরনের image?</h2><p class="lead">Native resolution ও original file সংরক্ষণই অগ্রাধিকার।</p>
+<div class="card"><div class="tabs" id="t3"></div><div id="c3"></div></div></section>
+
+<section id="s4"><h2>৪. Image quality control</h2><p class="lead">প্রতিটি ছবির জন্য নির্ধারিত procedure; বাদ গেলে কত ও কেন তা report করুন।</p>
+<div class="card tw"><table><tr><th>Criterion</th><th>কী পরীক্ষা করবেন</th></tr>
+<tr><td>Focus</td><td>Retina ও blood vessel যথেষ্ট স্পষ্ট কি না</td></tr><tr><td>Illumination</td><td>অতিরিক্ত উজ্জ্বল বা অন্ধকার কি না</td></tr><tr><td>Field of view</td><td>প্রয়োজনীয় retinal area দৃশ্যমান কি না</td></tr><tr><td>Occlusion</td><td>Eyelash, reflection ইত্যাদিতে retina ঢাকা কি না</td></tr><tr><td>Color</td><td>অস্বাভাবিক color cast বা processing artifact</td></tr><tr><td>Resolution</td><td>প্রয়োজনীয় clinical detail আছে কি না</td></tr><tr><td>Duplicate</td><td>একই বা প্রায় একই ছবির পুনরাবৃত্তি</td></tr><tr><td>Gradability</td><td>বিশেষজ্ঞ নির্ভরযোগ্যভাবে grade দিতে পারেন কি না</td></tr></table></div>
+<div class="warn">ঝুঁকি: No DR ছবি পরিষ্কার আর Severe DR ছবি ঝাপসা হলে model রোগের বদলে image quality শিখতে পারে। প্রতিটি class-এ quality distribution তুলনা করুন। Ungradable image-কে No DR label দেবেন না।</div></section>
+
+<section id="s5"><h2>৫. Clinical label ও grading protocol</h2><p class="lead">এখানে আপস নয়। হাসপাতালকে এই ৬টি প্রশ্ন করুন:</p>
+<div class="g" id="q5"></div>
+<div class="card" style="margin-top:12px"><b>Double grading ও adjudication:</b> সম্ভব হলে একটি subset দুইজন qualified grader স্বাধীনভাবে grade করবেন; disagreement rate ও final label কীভাবে স্থির হলো লিখুন। Agreement-এ Cohen&#8217;s kappa বা weighted kappa ব্যবহার করা যায়। সব image double grade না হলে sample-based review করে কত শতাংশ যাচাই হলো report করুন। হাসপাতালের patient-level diagnosis স্বয়ংক্রিয়ভাবে image-level label নয়।</div></section>
+
+<section id="s6"><h2>৬. Metadata CSV structure</h2><p class="lead">প্রতিটি row একটি image। Header copy করে হাসপাতালকে পাঠাতে পারেন।</p>
+<div class="card"><input type="search" id="ms" placeholder="Field খুঁজুন"> <button id="mc">CSV header copy</button><div class="tw" style="margin-top:8px"><table id="mt"></table></div></div>
+<div class="g" style="margin-top:12px"><div class="card"><h4>Privacy ও security</h4><ul><li>নাম, ফোন, ঠিকানা, NID, registration number modeling CSV-তে নয়।</li><li>Patient ID pseudonymize; re-identification key আলাদা, প্রতিষ্ঠানের নিয়ন্ত্রণে।</li><li>EXIF/embedded metadata পরীক্ষা করুন।</li><li>Access, storage, retention, sharing নিয়ম আগে ঠিক করুন; checksum রাখুন।</li></ul></div>
+<div class="card"><h4>কেন patient ID জরুরি</h4><p>Patient ID ছাড়া patient-level split ও repeat-image leakage প্রতিরোধ অনেক কঠিন। এটি আগেই সমাধান করুন।</p></div></div></section>
+
+<section id="s7"><h2>৭. Class imbalance</h2><p class="lead">কোনো balancing method দুর্বল label, কম unique patient বা নিম্নমানের image-এর বিকল্প নয়।</p><div class="g">
+<div class="card"><h4>Class-weighted loss</h4><p>Training-এ minority class-এর ভুলকে বেশি গুরুত্ব।</p></div>
+<div class="card"><h4>Balanced sampling</h4><p>Batch-এ class representation নিয়ন্ত্রণ।</p></div>
+<div class="card"><h4>Augmentation</h4><p>Clinically reasonable flip, modest rotation, brightness/contrast; diagnosis-related তথ্য বিকৃত না হলে।</p></div>
+<div class="card"><h4>Oversampling</h4><p>শুধু training set-এ; duplicate-কে নতুন independent image গণনা করবেন না।</p></div>
+<div class="card"><h4>Synthetic data</h4><p>স্পষ্টভাবে চিহ্নিত করুন; real, untouched test set-এ যাচাই।</p></div></div>
+<p class="mu">হিসাব রাখুন: class-wise count/percentage, unique patient, gradable/ungradable, age group (অনুমোদিত হলে), camera/site/visit অনুযায়ী distribution।</p></section>
+
+<section id="s8"><h2>৮. Split ও external validation</h2><p class="lead">সবচেয়ে গুরুত্বপূর্ণ নিয়ম: patient-level split। (Split-এর অনুপাত ২ নম্বর section-এর planner-এ দেখুন।)</p>
+<div class="tl" id="sp"></div><div class="warn">Test set-এ augmentation, model selection বা hyperparameter tuning নয়। Patient ID না পেলে হাসপাতালের সঙ্গে privacy-preserving উপায় ঠিক করুন। External validation internal test-এর বিকল্প নয়, অতিরিক্ত ধাপ; grading scale, camera ও population-এর পার্থক্য নথিভুক্ত করুন। অন্য dataset-এ model খারাপ করাও গুরুত্বপূর্ণ ফল।</div></section>
+
+<section id="s9"><h2>৯. Model ও metrics</h2><p class="lead">আগে reproducible baseline (Basic CNN), তারপর ResNet, EfficientNet বা অন্য উপযুক্ত architecture। Pretrained হলে weights source ও fine-tuning নথিভুক্ত করুন।</p>
+<div class="card tw"><table><tr><th>Metric</th><th>কেন</th></tr>
+<tr><td>Accuracy</td><td>সব prediction-এর মধ্যে সঠিকের অনুপাত</td></tr><tr><td>Macro-F1</td><td>প্রতিটি class-কে সমান গুরুত্ব</td></tr><tr><td>Per-class precision</td><td>Predict করা ছবির কত অংশ সঠিক</td></tr><tr><td>Per-class recall / sensitivity</td><td>প্রকৃত ছবির কত অংশ শনাক্ত</td></tr><tr><td>Specificity</td><td>Negative case সঠিক চেনার ক্ষমতা</td></tr><tr><td>Confusion matrix</td><td>কোন grade কোনটির সঙ্গে গুলিয়ে যাচ্ছে</td></tr><tr><td>ROC-AUC</td><td>One-vs-rest বা binary setting-এ discrimination</td></tr><tr><td>Quadratic weighted kappa</td><td>Ordered grade-এর agreement</td></tr></table></div>
+<p class="mu">Multiclass-এ sensitivity/specificity/AUC কীভাবে গণনা হলো লিখুন। Screening দাবি করলে operating threshold ও false-negative-এর গুরুত্ব বিবেচনা করুন। Confidence interval দিন; একই রোগীর একাধিক ছবি থাকলে patient-level dependence ধরুন।</p></section>
+
+<section id="s10"><h2>১০. Explainable AI validation</h2><p class="lead">শুধু heatmap বানানো যথেষ্ট নয়; কীভাবে মূল্যায়ন করবেন তা data collection-এর সময়ই ঠিক করুন।</p>
+<div class="lv"><div class="card"><h4>Level 1 · Grad-CAM analysis</h4><p class="mu">বিভিন্ন class, correct/misclassified, confidence level-এর উদাহরণে দেখুন model retina-র relevant অঞ্চলে focus করছে কি না।</p></div>
+<div class="card"><h4>Level 2 · Expert-annotated subset</h4><p class="mu">Microaneurysm, hemorrhage, exudate ইত্যাদির mask বা bounding box, representative subset-এ।</p></div>
+<div class="card"><h4>Level 3 · Quantitative</h4><p class="mu">Ground truth থাকলে IoU/Dice; সব heatmap-এর জন্য সমান উপযুক্ত নয়, তাই method ও metric-এর মিল ব্যাখ্যা করুন।</p></div></div>
+<div class="g" style="margin-top:12px"><div class="card"><h4>কী সংগ্রহ করবেন</h4><ul><li>Expert lesion annotation ও তার documentation</li><li>Predicted class ও confidence</li><li>XAI method, layer, configuration</li><li>Heatmap-এর preprocessing ও coordinate mapping</li><li>Correct ও incorrect prediction-এর explanation</li><li>Stability/sensitivity test পরিকল্পনা</li></ul></div>
+<div class="card"><h4>সতর্কতা</h4><ul><li>সুন্দর heatmap মানেই clinically faithful নয়।</li><li>Expert annotation ছাড়া lesion localization প্রমাণিত বলবেন না।</li><li>আলাদা clinical validation ছাড়া চিকিৎসা-সিদ্ধান্তের সক্ষমতা দাবি নয়।</li><li>Grad-CAM-এর পাশে Integrated Gradients তুলনা করা যায়।</li></ul></div></div></section>
+
+<section id="s11"><h2>১১. Lesion annotation চাওয়া</h2><p class="lead">সব ছবির pixel-level annotation না চেয়ে আগে representative subset।</p>
+<div class="card"><ul><li>প্রতিটি grade থেকে উপযুক্ত subset-এ annotation সম্ভব কি না</li><li>Pixel mask, bounding box, নাকি lesion presence/absence</li><li>কোন lesion type; কে করেছেন; কীভাবে যাচাই</li><li>Image ID-র সঙ্গে annotation-এর সংযোগ</li><li>Annotation ও গবেষণায় ব্যবহারের অনুমোদন</li></ul><p class="mu">Feasibility pilot উদাহরণ: প্রতি grade থেকে ৫০–১০০ ছবি (বাধ্যতামূলক সংখ্যা নয়)। Annotation না পেলেও classification + qualitative XAI সম্ভব, তবে quantitative localization দাবি সীমিত রাখতে হবে।</p></div></section>
+
+<section id="s12"><h2>১২. Ethics, consent ও data-use agreement</h2><p class="lead">হাসপাতালের অনুমোদিত research process অনুসরণ করুন।</p>
+<div class="card" id="e12"></div><div class="warn">Consent waiver বা ethics exemption নিজে থেকে ধরে নেবেন না; যথাযথ কর্তৃপক্ষের সিদ্ধান্ত লাগবে।</div></section>
+
+<section id="s13"><h2>১৩. Folder structure</h2><p class="lead">Image, metadata ও annotation-এ consistent image ID। অনুমোদন ছাড়া clinical image public repository বা version-control-এ আপলোড নয়।</p>
+<pre>DR_XAI_Research/
+├── README.md
+├── data_dictionary.csv
+├── metadata/        image_metadata · label_metadata · split_manifest (.csv)
+├── images_original/ batch_001/ batch_002/
+├── annotations/     lesion_masks/ · annotation_metadata.csv
+├── quality_control/ qc_results.csv · exclusion_log.csv
+├── processed_data/  preprocessing_config.yaml
+├── src/             preprocessing · train · evaluate · explain (.py)
+└── results/         metrics/ · confusion_matrices/ · xai_examples/</pre></section>
+
+<section id="s14"><h2>১৪. হাসপাতালের কাছে একবারে কী চাইবেন</h2><p class="lead">টিক দিন, progress দেখুন, শেষে বাকি অংশ copy করে হাসপাতালকে পাঠান।</p>
+<div class="card"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="big" id="cp">0/23</span><span class="mu">সম্পন্ন</span><button id="cc">অসম্পূর্ণ তালিকা copy</button><button id="cr">Reset</button></div><div id="cl"></div></div></section>
+
+<section id="s15"><h2>১৫. Data collection থেকে paper</h2><p class="lead">১২ ধাপের workflow; শেষ করা ধাপে টিক দিন।</p><div class="tl" id="wf"></div></section>
+
+<section id="s16"><h2>১৬. Paper-এ কী report করবেন</h2><p class="lead">CLAIM (medical imaging AI) ও STARD-AI অনুসরণের উপযোগিতা যাচাই করুন; এগুলো স্বচ্ছতা বাড়ায়, কিন্তু dataset বা model validity নিশ্চিত করে না।</p><div class="g" id="rp"></div></section>
+
+<section id="s17"><h2>চূড়ান্ত সুপারিশ</h2><div class="card"><ol><li>পাঁচ grade-সহ clinically verified real fundus image; প্রাথমিক 2,500, বর্ধিত 5,000 usable image বিবেচনা (বাস্তব সংখ্যা clinical data ও statistical need অনুযায়ী)।</li><li>Image count-এর পাশে unique patient, left/right eye ও repeat-visit তথ্য।</li><li>Original file, resolution, format, metadata, image-label mapping সংরক্ষণ।</li><li>Grading scale, quality criteria, disagreement resolution আগে নিশ্চিত।</li><li>Ethics, data-use permission ও privacy মেনে সংগ্রহ; patient-level split।</li><li>Imbalance, quality ও performance মূল্যায়ন; XAI + expert-annotated subset; সম্ভব হলে external validation; সব limitation প্রকাশ।</li></ol><p class="mu">সবচেয়ে গুরুত্বপূর্ণ: image, clinical label, pseudonymous patient ID, grading protocol, quality information ও অনুমোদিত metadata একসঙ্গে সংগ্রহ করুন। এতে পুনরায় data সংগ্রহ কমতে পারে, যদিও সম্পূর্ণ এড়ানো নিশ্চিত নয়।</p></div></section>
+<p class="note">অগ্রগতি (checklist ও workflow) এই browser-এ সংরক্ষিত থাকে।</p>
+</main>
+<script>
+const $=s=>document.querySelector(s),H=(el,h)=>el.innerHTML=h;
+const GR=[["No DR","ছবিতে DR-এর প্রমাণ নেই","var(--g0)"],["Mild NPDR","প্রাথমিক non-proliferative DR","var(--g1)"],["Moderate NPDR","মাঝারি মাত্রার NPDR","var(--g2)"],["Severe NPDR","গুরুতর NPDR","var(--g3)"],["PDR","Proliferative diabetic retinopathy","var(--g4)"]];
+H($('#gr'),GR.map((g,i)=>`<button data-g="${i}">${g[0]}<small>class ${i}</small></button>`).join(''));
+function sg(i){document.querySelectorAll('[data-g]').forEach(b=>{const on=b.dataset.g==i;b.classList.toggle('on',on);b.style.background=on?GR[i][2]:''});H($('#gd'),`<b>Class ${i} — ${GR[i][0]}:</b> ${GR[i][1]}`)}sg(0);
+const SEC=["Objective","Image সংখ্যা","Image type","QC","Label","Metadata","Imbalance","Split","Metrics","XAI","Annotation","Ethics","Folder","Checklist","Workflow","Report"];
+H($('#nv'),SEC.map((s,i)=>`<a href="#s${i+1}">${s}</a>`).join(''));
+/* planner */
+const fm=n=>n.toLocaleString('en-US');
+function plan(){const pc=+$('#pc').value;let tr=+$('#tr').value,va=+$('#va').value;if(tr+va>95){va=95-tr;$('#va').value=va}const te=100-tr-va,N=pc*5;
+$('#pcv').textContent=pc;$('#trv').textContent=tr;$('#vav').textContent=va;$('#tot').textContent=fm(N);
+const r=p=>Math.round(N*p/100),rc=p=>Math.round(pc*p/100);
+H($('#sk'),`<span style="flex:${tr};background:#4b3fb3">Train ${tr}%</span><span style="flex:${va};background:#a35a00">Val ${va}%</span><span style="flex:${Math.max(te,1)};background:#1d7a4a">Test ${te}%</span>`);
+H($('#tb'),`<tr><th></th><th>Per class</th><th>মোট</th></tr><tr><td>Train</td><td>${fm(rc(tr))}</td><td>${fm(r(tr))}</td></tr><tr><td>Validation</td><td>${fm(rc(va))}</td><td>${fm(r(va))}</td></tr><tr><td>Test</td><td>${fm(rc(te))}</td><td>${fm(r(te))}</td></tr>`)}
+document.addEventListener('input',e=>{if(['pc','tr','va'].includes(e.target.id))plan()});plan();
+/* tabs */
+const T3={"Image type":["Color retinal fundus photograph। Retina, optic disc, macula ও blood vessel যথাসম্ভব স্পষ্ট। একাধিক imaging protocol থাকলে নথিভুক্ত করুন।"],"Quality":["Blur, glare, under/overexposure, অসম্পূর্ণ field, obscured retina পরীক্ষা করুন। Ungradable-কে আলাদা quality status দিন।"],"Resolution":["Camera-র native resolution সংগ্রহ করুন; 224×224 বা 512×512-এ আগেই resize নয়, preprocessing-এ করুন। 224×224 দ্রুত baseline-এ কাজে লাগে, কিন্তু সূক্ষ্ম lesion-এর জন্য উচ্চ resolution বা patch-based approach পরীক্ষা লাগতে পারে। সিদ্ধান্ত validation data-তে নিন, test দেখে নয়।"],"Format":["JPEG/JPG: প্রচলিত; compression level নথিভুক্ত করুন।","PNG: lossless, তবে original camera output কি না প্রতিষ্ঠানের ওপর নির্ভর।","TIFF: উচ্চমানের workflow-এ পাওয়া যেতে পারে।","DICOM/proprietary: মূল format ও export/conversion documentation চান।"],"Handling":["Original file অপরিবর্তিত রাখুন; analysis-এর জন্য আলাদা processed copy।","Conversion-এ color profile, aspect ratio ও integrity পরীক্ষা।","Image ID–label mapping অক্ষত রাখুন।","Duplicate ও near-duplicate শনাক্ত করুন।","Preprocessing-এর প্রতিটি ধাপ code ও configuration-সহ নথিভুক্ত।"]};
+H($('#t3'),Object.keys(T3).map((k,i)=>`<button data-t="${k}" class="${i?'':'on'}">${k}</button>`).join(''));
+const st3=k=>{H($('#c3'),'<ul>'+T3[k].map(x=>`<li>${x}</li>`).join('')+'</ul>')};st3("Image type");
+H($('#q5'),["Label কে দিয়েছেন — ophthalmologist, retinal specialist, নাকি অন্য qualified grader?","কোন grading scale — ICDR বা প্রতিষ্ঠানের অনুমোদিত protocol?","পাঁচ grade-এর operational definition কী?","একাধিক grade নিয়ে মতবিরোধে সিদ্ধান্ত কীভাবে?","Grading কি শুধু fundus image থেকে, নাকি clinical examination বা অন্য তথ্য থেকেও?","Image quality-র কারণে grade না হলে কীভাবে চিহ্নিত?"].map((q,i)=>`<div class="card"><h4>প্রশ্ন ${i+1}</h4><p>${q}</p></div>`).join(''));
+/* metadata */
+const MF=[["image_id","Unique image identifier"],["patient_id","Pseudonymous patient identifier"],["eye","Left / Right"],["dr_grade","0–4 বা নির্ধারিত code"],["grading_scale","ব্যবহৃত clinical scale"],["image_quality","Gradable / Ungradable / quality grade"],["grader_type","Grader-এর professional category"],["label_review_status","Single / Double review / Adjudicated"],["camera_id","Device identifier (থাকলে)"],["site_id","Clinical site-এর pseudonymous code"],["capture_date","অনুমোদিত, সীমিত date"],["visit_id","Repeat visit আলাদা করার code"],["original_format","JPEG, PNG, TIFF ইত্যাদি"],["original_width","Original width"],["original_height","Original height"],["duplicate_status","Unique / Duplicate / Review needed"],["exclusion_reason","বাদ দিলে কারণ"],["consent_or_approval_ref","অনুমোদন documentation reference"]];
+function mt(q){H($('#mt'),'<tr><th>Field</th><th>কী থাকবে</th></tr>'+MF.filter(f=>(f[0]+f[1]).toLowerCase().includes(q)).map(f=>`<tr><td><code>${f[0]}</code></td><td>${f[1]}</td></tr>`).join(''))}mt('');
+$('#ms').addEventListener('input',e=>mt(e.target.value.toLowerCase()));
+/* split steps */
+H($('#sp'),["Patient ও visit অনুযায়ী image group তৈরি","Group-গুলো train / validation / test-এ ভাগ","সম্ভব হলে group-aware stratification-এ class distribution ভারসাম্যপূর্ণ রাখা","Image ID-সহ split manifest সংরক্ষণ","Test set-এ কোনো tuning না করা"].map((s,i)=>`<div class="st"><span class="n">${i+1}</span><b>${s}</b></div>`).join(''));
+H($('#e12'),'<ul>'+["প্রযোজ্য ethics committee/IRB অনুমোদন লাগবে কি না ও কীভাবে পাবেন","Retrospective data-তে consent লাগবে, নাকি অনুমোদিত waiver প্রযোজ্য হতে পারে","Research-only data-use agreement কীভাবে","Data কোথায় থাকবে ও কারা access পাবে","Publication, supplementary ও future research-এ কী ব্যবহার অনুমোদিত","Transfer, retention, deletion ও incident response-এর নিয়ম","Sharing বা external collaboration-এ আলাদা অনুমোদন লাগবে কি না"].map(x=>`<li>${x}</li>`).join('')+'</ul>');
+H($('#rp'),[["Dataset","Source institution, collection period (অনুমোদিত হলে), image ও unique patient count"],["Clinical grading","Scale, grader qualification, label verification, agreement"],["Quality control","Exclusion criteria, ungradable, duplicate handling"],["Preprocessing","Resizing, normalization, color enhancement, augmentation"],["Experimental design","Patient-level split, seeds, training config, model selection"],["Evaluation","Overall ও per-class metrics, CI, confusion matrix"],["Explainability","Methods, উদাহরণ, quantitative validation, সীমাবদ্ধতা"],["Generalizability","Camera, site, population, quality variation-এর প্রভাব"],["Ethics","Approval, consent/waiver অবস্থা, privacy safeguards"],["Limitations","Sample size, imbalance, annotation, external validation"]].map(r=>`<div class="card"><h4>${r[0]}</h4><p>${r[1]}</p></div>`).join(''));
+/* persistence */
+let S={};try{S=JSON.parse(localStorage.getItem('drx')||'{}')}catch(e){}
+const sv=()=>{try{localStorage.setItem('drx',JSON.stringify(S))}catch(e){}};
+const CL=[["A. Research permission",["Ethics / IRB requirements ও institutional permission","Data-use agreement ও approved research scope","Storage, access, retention ও data-sharing rules"]],["B. Fundus images",["Original/native-resolution image file","Original format ও available camera metadata","Unique image ID এবং image-label mapping","Duplicate ও repeat-visit image শনাক্ত করার উপায়"]],["C. Clinical labels",["পাঁচ DR grade-এর label ও grading scale","প্রতি grade-এর image count ও unique patient count","Grader qualification ও label verification procedure","Disagreement resolution / adjudication protocol"]],["D. Image quality",["Gradable / ungradable status","Image quality assessment criteria","Excluded image ও exclusion reason","প্রতি class-এ quality distribution যাচাইয়ের সুযোগ"]],["E. Patient-level metadata",["Pseudonymous patient ID","Left / right eye ও repeat-visit identifier","অনুমোদিত site / camera identifier","Direct identifier বাদ দেওয়া"]],["F. XAI validation",["Lesion-annotated subset-এর সম্ভাবনা","Annotation type, lesion class ও protocol","Annotation quality review ও linked image ID","Annotation ও research use-এর অনুমোদন"]]];
+let k=0;H($('#cl'),CL.map(g=>`<div class="grp"><h4>${g[0]}</h4>${g[1].map(x=>`<label class="ck"><input type="checkbox" data-k="c${k}"><span>${x}</span></label>`.replace(/c\d+/,'c'+(k++))).join('')}</div>`).join(''));
+const WF=[["Research protocol","Question, five-class grading, primary metrics, XAI plan লিখুন"],["Hospital feasibility","প্রতি class-এর image ও patient count, label ও annotation support জানুন"],["Ethics ও permission","Approval, consent requirement, data-use agreement"],["Data specification","Format, native resolution, metadata, quality criteria, delivery format লিখিত"],["Collection ও integrity","Image ID, readability, duplicate, metadata consistency, checksum"],["Label ও quality review","Protocol, ungradable, disagreement, exclusion নথিভুক্ত"],["Patient-level splitting","Group split ও split manifest সংরক্ষণ"],["Baseline training","Basic CNN বা pretrained architecture দিয়ে reproducible baseline"],["Performance evaluation","Macro-F1, per-class metrics, confusion matrix, CI"],["XAI validation","Grad-CAM review, localization analysis, stability test"],["External validation","Independent dataset, camera ও quality variation"],["Reporting","Dataset flow, counts, exclusions, leakage prevention, limitations"]];
+H($('#wf'),WF.map((w,i)=>`<label class="st"><span class="n">${i+1}</span><span><b>${w[0]}</b><small>${w[1]}</small></span><input type="checkbox" data-k="w${i}"></label>`).join(''));
+function ref(){let c=0;document.querySelectorAll('[data-k]').forEach(i=>{const on=!!S[i.dataset.k];i.checked=on;const p=i.closest('.ck,.st');p&&p.classList.toggle('d',on);if(on&&i.dataset.k[0]=='c')c++});$('#cp').textContent=c+'/23';
+const all=Object.keys(S).filter(x=>S[x]).length;$('#pb').style.width=(all/35*100)+'%'}
+document.addEventListener('change',e=>{const k=e.target.dataset.k;if(k){S[k]=e.target.checked;sv();ref()}});
+document.addEventListener('click',e=>{const t=e.target;
+if(t.dataset.g!==undefined)sg(t.dataset.g);if(t.dataset.p){$('#pc').value=t.dataset.p;plan()}
+if(t.dataset.t){t.parentNode.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b===t));st3(t.dataset.t)}
+if(t.id=='mc'){try{navigator.clipboard.writeText(MF.map(f=>f[0]).join(','))}catch(x){}t.textContent='Copied';setTimeout(()=>t.textContent='CSV header copy',1200)}
+if(t.id=='cc'){const o=[];document.querySelectorAll('[data-k^=c]').forEach(i=>{if(!i.checked)o.push('- '+i.nextElementSibling.textContent)});try{navigator.clipboard.writeText(o.join('\n'))}catch(x){}t.textContent='Copied';setTimeout(()=>t.textContent='অসম্পূর্ণ তালিকা copy',1200)}
+if(t.id=='cr'){document.querySelectorAll('[data-k^=c]').forEach(i=>delete S[i.dataset.k]);sv();ref()}
+if(t.id=='th'){const r=document.documentElement;r.dataset.theme=getComputedStyle(r).getPropertyValue('--bg').trim()=='#130f1f'?'light':'dark'}});
+const io=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting)document.querySelectorAll('.nav a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')=='#'+x.target.id))}),{rootMargin:'-20% 0px -70% 0px'});
+document.querySelectorAll('section').forEach(s=>io.observe(s));ref();
+</script></body></html>
